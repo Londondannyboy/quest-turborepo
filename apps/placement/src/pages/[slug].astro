@@ -105,15 +105,6 @@ const htmlContent = await marked(articleContent, {
       </header>
     )}
 
-    <!-- Excerpt -->
-    {article.excerpt && (
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-gray-200 dark:border-gray-700">
-        <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed font-light">
-          {article.excerpt}
-        </p>
-      </div>
-    )}
-
     <!-- Article Body -->
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="article-content" set:html={htmlContent} />
