@@ -1,36 +1,47 @@
 #!/usr/bin/env node
 /**
- * Generate AI images for articles missing featured images
- * Uses Replicate AI to generate professional images
- * Uploads to Cloudinary and updates Neon database
+ * 🎨 QUEST UNIVERSAL IMAGE GENERATOR
+ *
+ * Generates ALL image types for articles:
+ * - Hero images (article headers)
+ * - Featured images (card thumbnails)
+ * - Content images 1-3 (inline article images)
+ *
+ * Uses: Replicate AI (Flux Schnell) + Cloudinary CDN
+ * Updates: Neon PostgreSQL database
+ *
+ * TEMPLATE: Save this for all Quest projects
  */
 
+import { config } from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import Replicate from 'replicate';
 import { v2 as cloudinary } from 'cloudinary';
 import { neon } from '@neondatabase/serverless';
 
+// Load environment variables
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+config({ path: join(__dirname, '../.env.local') });
+
 // Configuration
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_Q9VMTIX2eHws@ep-steep-wildflower-abrkgyqu-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require';
+const DATABASE_URL = process.env.DATABASE_URL;
 const REPLICATE_API_KEY = process.env.REPLICATE_API_KEY;
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
-// Validate environment variables
-if (!REPLICATE_API_KEY) {
-  console.error('❌ REPLICATE_API_KEY is required');
+// Validate
+if (!REPLICATE_API_KEY || !CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+  console.error('❌ Missing required environment variables');
+  console.error('Required: REPLICATE_API_KEY, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET');
   process.exit(1);
 }
 
-if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-  console.error('❌ Cloudinary credentials are required (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET)');
-  process.exit(1);
-}
-
-// Initialize services
+// Initialize
 const sql = neon(DATABASE_URL);
 const replicate = new Replicate({ auth: REPLICATE_API_KEY });
-
 cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
   api_key: CLOUDINARY_API_KEY,
@@ -38,169 +49,216 @@ cloudinary.config({
 });
 
 /**
- * Generate image prompt from article title and excerpt
+ * Generate image prompts based on article and image type
  */
-function generatePrompt(article) {
+function generatePrompt(article, imageType) {
   const title = article.title;
   const contentType = article.content_type;
 
-  let basePrompt = '';
+  const baseStyle = "professional, high quality, photorealistic, sharp focus, natural lighting, 8k resolution";
 
+  // Company profile images
   if (contentType === 'company_profile') {
-    basePrompt = `Professional corporate office building, modern financial district, sleek glass architecture, business district skyline, high-end investment firm atmosphere, sophisticated and elegant, photorealistic, high quality, sharp focus, natural lighting, 8k resolution`;
-  } else {
-    // For articles about placement agents, fundraising, private equity
-    basePrompt = `Professional business scene related to "${title}", modern financial office, sophisticated corporate environment, investment banking atmosphere, elegant and professional, photorealistic, high quality, sharp focus, natural lighting, business people in professional attire, 8k resolution`;
+    const prompts = {
+      hero: `Wide panoramic view of modern corporate headquarters building, sleek glass architecture, impressive business district skyline, professional corporate atmosphere, ${baseStyle}`,
+      featured: `Modern office building exterior, corporate headquarters, financial district, professional architecture, ${baseStyle}`,
+      content_1: `Professional business meeting room, modern office interior, corporate boardroom, executive setting, ${baseStyle}`,
+      content_2: `Business professionals in modern office, team collaboration, corporate environment, diverse team meeting, ${baseStyle}`,
+      content_3: `City skyline with modern office buildings, financial district aerial view, urban business center, ${baseStyle}`,
+    };
+    return prompts[imageType];
   }
 
-  return basePrompt;
+  // Article images (placement agents, fundraising, etc.)
+  const articlePrompts = {
+    hero: `Professional business concept for "${title}", modern corporate office, sophisticated financial environment, wide banner format, ${baseStyle}`,
+    featured: `Business concept representing "${title}", professional corporate scene, investment banking atmosphere, thumbnail friendly, ${baseStyle}`,
+    content_1: `Businesspeople discussing ${title.toLowerCase()}, modern office meeting, professional attire, collaboration scene, ${baseStyle}`,
+    content_2: `Financial charts and data visualization related to ${title.toLowerCase()}, modern analytics dashboard, professional presentation, ${baseStyle}`,
+    content_3: `Corporate handshake and partnership concept for ${title.toLowerCase()}, professional business agreement, modern office background, ${baseStyle}`,
+  };
+
+  return articlePrompts[imageType];
 }
 
 /**
- * Generate image using Replicate (Flux Schnell - fast and free)
+ * Generate image using Replicate
  */
-async function generateImage(prompt) {
-  console.log(`  🎨 Generating image...`);
+async function generateImage(prompt, aspectRatio = '16:9') {
+  console.log(`  🎨 Generating (${aspectRatio})...`);
 
   try {
     const output = await replicate.run(
       "black-forest-labs/flux-schnell",
       {
         input: {
-          prompt: prompt,
+          prompt,
           go_fast: true,
           num_outputs: 1,
-          aspect_ratio: "16:9",
+          aspect_ratio: aspectRatio,
           output_format: "webp",
           output_quality: 90,
         }
       }
     );
 
-    // Output is an array of URLs
     const imageUrl = Array.isArray(output) ? output[0] : output;
-    console.log(`  ✅ Image generated: ${imageUrl}`);
+    console.log(`  ✅ Generated`);
     return imageUrl;
   } catch (error) {
-    console.error(`  ❌ Error generating image:`, error.message);
+    console.error(`  ❌ Generation failed:`, error.message);
     throw error;
   }
 }
 
 /**
- * Upload image to Cloudinary
+ * Upload to Cloudinary
  */
-async function uploadToCloudinary(imageUrl, slug) {
-  console.log(`  ☁️  Uploading to Cloudinary...`);
+async function uploadToCloudinary(imageUrl, publicId, folder = 'quest') {
+  console.log(`  ☁️  Uploading...`);
 
   try {
     const result = await cloudinary.uploader.upload(imageUrl, {
-      folder: 'placement-quest',
-      public_id: slug,
+      folder,
+      public_id: publicId,
       overwrite: true,
       resource_type: 'image',
     });
 
-    console.log(`  ✅ Uploaded: ${result.secure_url}`);
+    console.log(`  ✅ Uploaded`);
     return result.secure_url;
   } catch (error) {
-    console.error(`  ❌ Error uploading to Cloudinary:`, error.message);
+    console.error(`  ❌ Upload failed:`, error.message);
     throw error;
   }
 }
 
 /**
- * Update article in database
+ * Update article in database with all image URLs
  */
-async function updateArticle(id, imageUrl) {
+async function updateArticleImages(id, images) {
   console.log(`  💾 Updating database...`);
 
   try {
     await sql`
       UPDATE articles
-      SET featured_image_url = ${imageUrl},
-          updated_at = NOW()
+      SET
+        hero_image_url = ${images.hero || null},
+        featured_image_url = ${images.featured || null},
+        content_image_1_url = ${images.content_1 || null},
+        content_image_2_url = ${images.content_2 || null},
+        content_image_3_url = ${images.content_3 || null},
+        updated_at = NOW()
       WHERE id = ${id}
     `;
-    console.log(`  ✅ Database updated`);
+    console.log(`  ✅ Database updated with ${Object.keys(images).length} images`);
   } catch (error) {
-    console.error(`  ❌ Error updating database:`, error.message);
+    console.error(`  ❌ Database update failed:`, error.message);
     throw error;
   }
 }
 
 /**
- * Process a single article
+ * Process a single article - generate ALL images
  */
-async function processArticle(article, index, total) {
-  console.log(`\n[${index + 1}/${total}] Processing: ${article.title}`);
+async function processArticle(article, index, total, targetSite) {
+  console.log(`\n[${ index + 1}/${total}] 📄 ${article.title}`);
   console.log(`  Slug: ${article.slug}`);
+  console.log(`  Type: ${article.content_type}`);
+
+  const images = {};
+  const imageTypes = ['hero', 'featured', 'content_1', 'content_2', 'content_3'];
 
   try {
-    // Generate prompt
-    const prompt = generatePrompt(article);
-    console.log(`  📝 Prompt: ${prompt.substring(0, 100)}...`);
+    for (const imageType of imageTypes) {
+      console.log(`\n  📸 Generating ${imageType} image...`);
 
-    // Generate image
-    const generatedImageUrl = await generateImage(prompt);
+      // Generate prompt
+      const prompt = generatePrompt(article, imageType);
+      console.log(`  📝 Prompt: ${prompt.substring(0, 80)}...`);
 
-    // Upload to Cloudinary
-    const cloudinaryUrl = await uploadToCloudinary(generatedImageUrl, article.slug);
+      // Determine aspect ratio
+      const aspectRatio = imageType === 'hero' ? '21:9' : imageType === 'featured' ? '16:9' : '4:3';
 
-    // Update database
-    await updateArticle(article.id, cloudinaryUrl);
+      // Generate image
+      const generatedUrl = await generateImage(prompt, aspectRatio);
 
-    console.log(`  ✨ Success!`);
-    return { success: true, article: article.title };
+      // Upload to Cloudinary
+      const publicId = `${targetSite}/${article.slug}-${imageType}`;
+      const cloudinaryUrl = await uploadToCloudinary(generatedUrl, publicId, targetSite);
+
+      images[imageType] = cloudinaryUrl;
+      console.log(`  ✨ ${imageType}: Success`);
+
+      // Small delay between images to avoid rate limits
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // Update database with all images
+    await updateArticleImages(article.id, images);
+
+    console.log(`\n  🎉 Article complete! Generated ${Object.keys(images).length} images`);
+
+    return {
+      success: true,
+      article: article.title,
+      images_generated: Object.keys(images).length,
+      images
+    };
+
   } catch (error) {
-    console.error(`  ❌ Failed: ${error.message}`);
-    return { success: false, article: article.title, error: error.message };
+    console.error(`\n  ❌ Failed: ${error.message}`);
+    return {
+      success: false,
+      article: article.title,
+      error: error.message,
+      images_generated: Object.keys(images).length
+    };
   }
 }
 
 /**
- * Main function
+ * Main execution
  */
 async function main() {
-  console.log('🚀 Starting AI Image Generation for Placement Quest\n');
+  console.log('🚀 QUEST UNIVERSAL IMAGE GENERATOR\n');
+  console.log('═'.repeat(60));
 
-  // Get target site from args or default to 'placement'
+  // Get arguments
   const targetSite = process.argv[2] || 'placement';
   const limitArg = process.argv[3];
   const limit = limitArg ? parseInt(limitArg, 10) : null;
 
-  console.log(`Target site: ${targetSite}`);
-  if (limit) {
-    console.log(`Limit: ${limit} articles\n`);
-  }
+  console.log(`📍 Target: ${targetSite}.quest`);
+  if (limit) console.log(`🔢 Limit: ${limit} articles`);
+  console.log('═'.repeat(60));
 
-  // Fetch articles without images
-  let query = sql`
-    SELECT id, slug, title, content_type, excerpt
-    FROM articles
-    WHERE target_site = ${targetSite}
-      AND (featured_image_url IS NULL OR featured_image_url = '')
-      AND status = 'published'
-      AND content_type != 'hero'
-    ORDER BY created_at DESC
-  `;
-
+  // Fetch articles missing images
+  let articles;
   if (limit) {
-    query = sql`
+    articles = await sql`
       SELECT id, slug, title, content_type, excerpt
       FROM articles
       WHERE target_site = ${targetSite}
-        AND (featured_image_url IS NULL OR featured_image_url = '')
         AND status = 'published'
         AND content_type != 'hero'
+        AND (hero_image_url IS NULL OR featured_image_url IS NULL)
       ORDER BY created_at DESC
       LIMIT ${limit}
     `;
+  } else {
+    articles = await sql`
+      SELECT id, slug, title, content_type, excerpt
+      FROM articles
+      WHERE target_site = ${targetSite}
+        AND status = 'published'
+        AND content_type != 'hero'
+        AND (hero_image_url IS NULL OR featured_image_url IS NULL)
+      ORDER BY created_at DESC
+    `;
   }
 
-  const articles = await query;
-
-  console.log(`Found ${articles.length} articles without images\n`);
+  console.log(`\n📊 Found ${articles.length} articles needing images\n`);
 
   if (articles.length === 0) {
     console.log('✅ All articles already have images!');
@@ -210,39 +268,42 @@ async function main() {
   // Process articles
   const results = [];
   for (let i = 0; i < articles.length; i++) {
-    const result = await processArticle(articles[i], i, articles.length);
+    const result = await processArticle(articles[i], i, articles.length, targetSite);
     results.push(result);
 
-    // Small delay between requests to avoid rate limiting
+    // Delay between articles
     if (i < articles.length - 1) {
-      console.log('  ⏳ Waiting 2s before next article...');
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('\n⏳ Waiting 3s before next article...\n');
+      await new Promise(resolve => setTimeout(resolve, 3000));
     }
   }
 
   // Summary
-  console.log('\n' + '='.repeat(60));
+  console.log('\n' + '═'.repeat(60));
   console.log('📊 SUMMARY');
-  console.log('='.repeat(60));
+  console.log('═'.repeat(60));
 
   const successful = results.filter(r => r.success).length;
   const failed = results.filter(r => !r.success).length;
+  const totalImages = results.reduce((sum, r) => sum + (r.images_generated || 0), 0);
 
-  console.log(`✅ Successful: ${successful}`);
-  console.log(`❌ Failed: ${failed}`);
+  console.log(`✅ Successful articles: ${successful}`);
+  console.log(`❌ Failed articles: ${failed}`);
+  console.log(`🎨 Total images generated: ${totalImages}`);
 
   if (failed > 0) {
-    console.log('\nFailed articles:');
+    console.log('\n❌ Failed articles:');
     results.filter(r => !r.success).forEach(r => {
-      console.log(`  - ${r.article}: ${r.error}`);
+      console.log(`  • ${r.article}: ${r.error}`);
     });
   }
 
-  console.log('\n🎉 Done!\n');
+  console.log('\n🎉 Image generation complete!\n');
+  console.log(`🌐 View at: https://${targetSite}.quest\n`);
 }
 
 // Run
 main().catch(error => {
-  console.error('Fatal error:', error);
+  console.error('\n💥 Fatal error:', error);
   process.exit(1);
 });
