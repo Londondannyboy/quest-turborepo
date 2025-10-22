@@ -7,7 +7,7 @@ import Hero from '@quest/ui/components/Hero.astro';
 import ArticleCardFeatured from '@quest/ui/components/ArticleCardFeatured.astro';
 import ArticleCardGrid from '@quest/ui/components/ArticleCardGrid.astro';
 import Footer from '@quest/ui/components/Footer.astro';
-import { initializeSql, getRecentArticles } from '@quest/db';
+import { initializeSql, getRecentArticles, getArticles } from '@quest/db';
 
 // Initialize Neon - handle missing DATABASE_URL gracefully
 const databaseUrl = import.meta.env.DATABASE_URL;
@@ -21,9 +21,15 @@ initializeSql(databaseUrl);
 const siteName = (import.meta.env.SITE_NAME?.split(' ')[0] || 'placement').toLowerCase();
 const recentArticles = await getRecentArticles(siteName, 10);
 
+// Get featured companies for homepage
+const featuredCompanies = await getArticles(siteName, {
+  contentType: 'company_profile',
+  limit: 6,
+});
+
 // Get site info from env
 const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
-const siteTagline = import.meta.env.SITE_TAGLINE || 'Navigate the evolving landscape';
+const siteTagline = import.meta.env.SITE_TAGLINE || 'Expert guidance on private equity fundraising and placement agents';
 
 // Separate featured article from grid
 const featuredArticle = recentArticles?.[0];
@@ -46,6 +52,60 @@ const gridArticles = recentArticles?.slice(1) || [];
           <h2 class="text-3xl lg:text-4xl font-bold">Featured Story</h2>
         </div>
         <ArticleCardFeatured article={featuredArticle} />
+      </section>
+    )}
+
+    {/* Top Placement Agents Section */}
+    {featuredCompanies.length > 0 && (
+      <section class="mb-16">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Top Placement Agents</h2>
+            <p class="text-gray-600 dark:text-gray-400">Leading firms helping PE funds raise capital</p>
+          </div>
+          <a href="/top-agents" class="inline-flex items-center gap-2 px-4 py-2 text-primary border-2 border-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
+            View All
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {featuredCompanies.map((company, index) => (
+            <div class={`animate-fade-in-up animation-delay-${Math.min(index, 3) * 100}`}>
+              <a href={`/${company.slug}`} class="block group">
+                <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 h-full">
+                  <div class="p-6">
+                    {company.featured_image_url && (
+                      <div class="mb-4 aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
+                        <img
+                          src={company.featured_image_url}
+                          alt={company.title || company.headline_title}
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                      {company.title || company.headline_title}
+                    </h3>
+                    {company.excerpt && (
+                      <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-2 mb-4">
+                        {company.excerpt.replace(/<[^>]*>/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}
+                      </p>
+                    )}
+                    <div class="flex items-center gap-2 text-xs text-primary font-semibold">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                      </svg>
+                      <span>View Profile →</span>
+                    </div>
+                  </div>
+                </article>
+              </a>
+            </div>
+          ))}
+        </div>
       </section>
     )}
 
