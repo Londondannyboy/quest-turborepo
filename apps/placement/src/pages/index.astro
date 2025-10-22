@@ -6,10 +6,14 @@ import Header from '@quest/ui/components/Header.astro';
 import Hero from '@quest/ui/components/Hero.astro';
 import StatsSection from '@quest/ui/components/StatsSection.astro';
 import WhatWeCover from '@quest/ui/components/WhatWeCover.astro';
+import FAQSection from '@quest/ui/components/FAQSection.astro';
+import CitiesCollection from '@quest/ui/components/CitiesCollection.astro';
+import ContentSection from '@quest/ui/components/ContentSection.astro';
 import ArticleCardFeatured from '@quest/ui/components/ArticleCardFeatured.astro';
 import ArticleCardGrid from '@quest/ui/components/ArticleCardGrid.astro';
 import Footer from '@quest/ui/components/Footer.astro';
 import { initializeSql, getRecentArticles, getArticles } from '@quest/db';
+import { detectGeo, formatCurrency } from '@quest/geo';
 
 // Initialize Neon - handle missing DATABASE_URL gracefully
 const databaseUrl = import.meta.env.DATABASE_URL;
@@ -66,6 +70,73 @@ const placementTopics = [
     title: 'Regional Coverage',
     description: 'Comprehensive coverage of placement agents across key markets including US, Europe, Asia-Pacific, and emerging regions worldwide.',
     icon: 'globe',
+  },
+];
+
+// Geo-location and currency
+const userPrefs = detectGeo(Astro.request, {
+  forceRegion: 'UK', // Placement is UK-focused
+  showCurrencySelector: true,
+});
+
+// Key Cities for SEO
+const keyCities = [
+  { name: 'London', country: 'United Kingdom', slug: 'london', description: 'Europe\'s financial hub with the highest concentration of placement agents', count: 15, icon: '🇬🇧' },
+  { name: 'New York', country: 'United States', slug: 'new-york', description: 'Global capital markets center and headquarters for leading PE placement firms', count: 12, icon: '🇺🇸' },
+  { name: 'Hong Kong', country: 'China SAR', slug: 'hong-kong', description: 'Asia-Pacific gateway for cross-border private equity fundraising', count: 8, icon: '🇭🇰' },
+  { name: 'Singapore', country: 'Singapore', slug: 'singapore', description: 'Southeast Asia\'s premier financial center for alternative investments', count: 6, icon: '🇸🇬' },
+  { name: 'Paris', country: 'France', slug: 'paris', description: 'Continental Europe\'s leading market for placement agent services', count: 5, icon: '🇫🇷' },
+  { name: 'Frankfurt', country: 'Germany', slug: 'frankfurt', description: 'Germany\'s financial capital with strong institutional investor base', count: 4, icon: '🇩🇪' },
+];
+
+// FAQ Data
+const placementFAQs = [
+  {
+    question: 'What percentage of private equity funds use placement agents?',
+    answer: 'Approximately 40-60% of all private equity fundraises involve placement agents. The percentage varies significantly by fund size and manager experience. First-time and emerging managers use placement agents in 70-80% of cases, while established mega-funds ($5B+) often fundraise without placement support. Mid-market funds ($250M-$1B) represent the sweet spot where <a href="/articles" class="text-primary hover:underline">placement agents provide maximum value</a>.'
+  },
+  {
+    question: 'How much do placement agents typically charge?',
+    answer: `Placement agent fees generally range from 1.5-3% of total capital raised. Large-cap funds ($1B+) typically pay 1.5-2%, mid-market funds pay 2-2.5%, and smaller funds pay 2.5-3%. For a ${formatCurrency(500000000, userPrefs.currency)} fund, total placement costs would be approximately ${formatCurrency(12500000, userPrefs.currency)} (2.5% fee). Learn more about <a href="/fee-structures" class="text-primary hover:underline">placement agent fee structures</a>.`
+  },
+  {
+    question: 'Should first-time fund managers hire a placement agent?',
+    answer: 'First-time fund managers almost always benefit from placement agent engagement. Without established LP relationships or fundraising track records, emerging managers face significant challenges accessing institutional capital. <a href="/emerging-managers" class="text-primary hover:underline">Placement agents</a> provide credibility, LP access, fundraising expertise, and professional materials that dramatically improve success probabilities.'
+  },
+  {
+    question: 'How long does a typical fundraise take with a placement agent?',
+    answer: 'A typical institutional fundraise with a placement agent runs 9-18 months from initial engagement to final close. Established managers with strong track records can often complete fundraises in 9-12 months, while first-time managers or complex strategies may require 15-18 months. View our <a href="/top-agents" class="text-primary hover:underline">top placement agents</a> for more details.'
+  },
+  {
+    question: 'What are the best placement agents in London?',
+    answer: 'Leading London-based placement agents include <a href="/campbell-lutyens" class="text-primary hover:underline">Campbell Lutyens</a>, <a href="/park-hill-group" class="text-primary hover:underline">Park Hill Group</a>, <a href="/evercore" class="text-primary hover:underline">Evercore</a>, and <a href="/lazard" class="text-primary hover:underline">Lazard</a>. Browse all <a href="/cities/london" class="text-primary hover:underline">London placement agents</a>.'
+  },
+];
+
+// How Placement Works Content
+const howItWorksBlocks = [
+  {
+    heading: 'Initial Assessment (4-6 weeks)',
+    content: 'Placement agents conduct comprehensive due diligence on the GP, investment strategy, track record, and competitive positioning. This includes analysis of historical fund performance, team composition, investment process, and fund terms relative to market standards.',
+    links: [
+      { text: 'View Top Placement Agents', href: '/top-agents' },
+      { text: 'Selection Criteria Guide', href: '/selection-guide' },
+    ]
+  },
+  {
+    heading: 'Materials Development (6-8 weeks)',
+    content: 'Working with the GP team, the placement agent coordinates development of all fundraising materials including Private Placement Memorandum (PPM), marketing presentations, due diligence questionnaires (DDQ), track record documentation, and term sheets.',
+    links: [
+      { text: 'Fundraising Materials Guide', href: '/materials' },
+    ]
+  },
+  {
+    heading: 'LP Outreach & Roadshow (12-16 weeks)',
+    content: 'The placement agent leverages institutional relationships to identify and approach appropriate LP prospects, generating 50-150 initial conversations for institutional-quality mandates. A typical fundraise involves 40-80 substantive LP meetings over 3-4 months.',
+    links: [
+      { text: 'LP Targeting Strategies', href: '/lp-targeting' },
+      { text: 'Browse by City', href: '#cities' },
+    ]
   },
 ];
 ---
@@ -158,6 +229,32 @@ const placementTopics = [
     subheading="Everything you need to know about private equity placement agents and fundraising success"
     ctaText="Explore All Placement Agent Content"
     ctaLink="/articles"
+  />
+
+  {/* How Placement Agents Work Section */}
+  <ContentSection
+    title="How Private Equity Placement Agents Work"
+    intro="Understanding the placement agent engagement process is critical for fund managers considering whether to hire a private equity placement agent and how to maximize the relationship. The typical engagement follows a structured six-phase process:"
+    blocks={howItWorksBlocks}
+    ctaText="Read Full Guide"
+    ctaLink="/how-it-works"
+  />
+
+  {/* Key Cities Collection */}
+  <div id="cities">
+    <CitiesCollection
+      cities={keyCities}
+      heading="Browse Top Placement Agents by City"
+      subheading="Discover leading placement agents in major financial centers worldwide"
+      basePath="/cities"
+    />
+  </div>
+
+  {/* FAQ Section with Schema */}
+  <FAQSection
+    faqs={placementFAQs}
+    heading="Frequently Asked Questions"
+    subheading="Common questions about private equity placement agents and the fundraising process"
   />
 
   <!-- Continue Main Content -->

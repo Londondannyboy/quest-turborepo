@@ -1,0 +1,94 @@
+---
+/**
+ * Cities Collection Component
+ * Shows clickable city cards for SEO-critical geo pages
+ */
+
+export interface City {
+  name: string;
+  country: string;
+  slug: string;
+  description: string;
+  count: number; // Number of companies/articles in this city
+  icon?: string; // Optional emoji or icon
+}
+
+interface Props {
+  cities: City[];
+  heading?: string;
+  subheading?: string;
+  basePath?: string; // e.g., "/cities" or "/agents"
+}
+
+const {
+  cities,
+  heading = "Browse by City",
+  subheading = "Explore leading professionals and insights in key global markets",
+  basePath = "/cities",
+} = Astro.props;
+---
+
+<section class="py-16 lg:py-20">
+  <div class="mx-auto max-w-7xl px-4 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        {heading}
+      </h2>
+      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        {subheading}
+      </p>
+    </div>
+
+    <!-- Cities Grid -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {cities.map((city) => (
+        <a
+          href={`${basePath}/${city.slug}`}
+          class="group block bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transform hover:-translate-y-1"
+        >
+          <div class="p-6">
+            {/* City Icon/Emoji */}
+            {city.icon && (
+              <div class="text-4xl mb-3">
+                {city.icon}
+              </div>
+            )}
+
+            {/* City Name */}
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-primary transition-colors">
+              {city.name}
+            </h3>
+
+            {/* Country */}
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              {city.country}
+            </p>
+
+            {/* Description */}
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+              {city.description}
+            </p>
+
+            {/* Count Badge */}
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                {city.count} {city.count === 1 ? 'listing' : 'listings'}
+              </span>
+
+              {/* Arrow Icon */}
+              <svg
+                class="w-5 h-5 text-primary transform group-hover:translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
