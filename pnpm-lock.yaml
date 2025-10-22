@@ -36,6 +36,9 @@ importers:
       '@quest/db':
         specifier: workspace:*
         version: link:../../packages/quest-db
+      '@quest/geo':
+        specifier: workspace:*
+        version: link:../../packages/quest-geo
       '@quest/seo':
         specifier: workspace:*
         version: link:../../packages/quest-seo
