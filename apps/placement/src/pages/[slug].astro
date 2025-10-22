@@ -5,6 +5,7 @@ import BaseLayout from '@quest/ui/layouts/base.astro';
 import Header from '@quest/ui/components/Header.astro';
 import Footer from '@quest/ui/components/Footer.astro';
 import { initializeSql, getArticleBySlug } from '@quest/db';
+import { marked } from 'marked';
 
 // Initialize Neon - handle missing DATABASE_URL gracefully
 const databaseUrl = import.meta.env.DATABASE_URL;
@@ -34,6 +35,13 @@ const publishDate = article.created_at
       day: 'numeric',
     })
   : '';
+
+// Convert markdown to HTML
+const articleContent = article.article_body || article.content || '';
+const htmlContent = await marked(articleContent, {
+  breaks: true, // Convert line breaks to <br>
+  gfm: true, // GitHub Flavored Markdown
+});
 ---
 
 <BaseLayout
@@ -104,7 +112,7 @@ const publishDate = article.created_at
 
     <!-- Article Body -->
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="article-content" set:html={article.article_body || article.content} />
+      <div class="article-content" set:html={htmlContent} />
     </div>
 
     <!-- Back to Articles Link -->
