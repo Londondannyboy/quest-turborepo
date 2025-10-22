@@ -7,8 +7,5 @@
     "./components/*": "./src/components/*",
     "./utils/*": "./src/utils/*",
     "./tailwind.config.js": "./tailwind.config.js"
-  },
-  "devDependencies": {
-    "daisyui": "^5.3.7"
   }
 }

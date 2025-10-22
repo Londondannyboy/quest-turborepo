@@ -24,7 +24,6 @@ const recentArticles = await getRecentArticles(siteName, 10);
 // Get site info from env
 const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
 const siteTagline = import.meta.env.SITE_TAGLINE || 'Navigate the evolving landscape';
-const themeVariant = import.meta.env.THEME_VARIANT || 'financial';
 
 // Separate featured article from grid
 const featuredArticle = recentArticles?.[0];
@@ -33,7 +32,7 @@ const gridArticles = recentArticles?.slice(1) || [];
 
 <BaseLayout title={fullSiteName} description={siteTagline}>
   <!-- Header -->
-  <Header siteName={fullSiteName} themeVariant={themeVariant} />
+  <Header siteName={fullSiteName} />
 
   <!-- Hero Section -->
   <Hero siteName={fullSiteName} siteTagline={siteTagline} />
@@ -54,22 +53,11 @@ const gridArticles = recentArticles?.slice(1) || [];
     {gridArticles.length > 0 && (
       <section>
         <div class="flex items-center justify-between mb-8">
-          <h2 class="text-3xl lg:text-4xl font-bold">Recent Articles</h2>
-          <a href="/articles" class="btn btn-primary btn-outline btn-sm">
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">Recent Articles</h2>
+          <a href="/articles" class="inline-flex items-center gap-2 px-4 py-2 text-primary border-2 border-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
             View All
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              ></path>
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
           </a>
         </div>
