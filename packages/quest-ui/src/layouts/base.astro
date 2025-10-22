@@ -1,5 +1,6 @@
 ---
 import { getThemeName } from '../utils/theme';
+import CookieConsent from '@jop-software/astro-cookieconsent';
 import '../styles/global.css';
 
 interface Props {
@@ -52,6 +53,12 @@ const ogImage = image || `${siteUrl}/og-default.jpg`;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
+    <!-- Link Preview Support -->
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <link rel="preconnect" href="https://api.microlink.io" />
+    <link rel="dns-prefetch" href="https://api.microlink.io" />
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
@@ -88,5 +95,57 @@ const ogImage = image || `${siteUrl}/og-default.jpg`;
   </head>
   <body class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
     <slot />
+
+    <!-- Cookie Consent (GDPR compliant) -->
+    <CookieConsent
+      guiOptions={{
+        consentModal: {
+          layout: 'box',
+          position: 'bottom right'
+        }
+      }}
+      categories={{
+        necessary: {
+          enabled: true,
+          readOnly: true
+        },
+        analytics: {
+          enabled: false,
+          readOnly: false
+        }
+      }}
+      language={{
+        default: 'en',
+        translations: {
+          en: {
+            consentModal: {
+              title: "We value your privacy",
+              description: "We use cookies to enhance your browsing experience and analyze site traffic. You can customize your preferences below.",
+              acceptAllBtn: "Accept all",
+              acceptNecessaryBtn: "Reject all",
+              showPreferencesBtn: "Manage preferences"
+            },
+            preferencesModal: {
+              title: "Cookie preferences",
+              acceptAllBtn: "Accept all",
+              acceptNecessaryBtn: "Reject all",
+              savePreferencesBtn: "Save preferences",
+              sections: [
+                {
+                  title: "Strictly Necessary cookies",
+                  description: "These cookies are essential for the proper functioning of the website.",
+                  linkedCategory: "necessary"
+                },
+                {
+                  title: "Analytics cookies",
+                  description: "These cookies help us understand how visitors interact with our website.",
+                  linkedCategory: "analytics"
+                }
+              ]
+            }
+          }
+        }
+      }}
+    />
   </body>
 </html>
