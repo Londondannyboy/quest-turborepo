@@ -13,7 +13,8 @@ if (!databaseUrl) {
 initializeSql(databaseUrl);
 
 const { slug } = Astro.params;
-const siteName = import.meta.env.SITE_NAME?.toLowerCase() || 'placement';
+// Extract just first word of SITE_NAME for database query (e.g., "Placement Quest" -> "placement")
+const siteName = (import.meta.env.SITE_NAME?.split(' ')[0] || 'placement').toLowerCase();
 const article = await getArticleBySlug(siteName, slug || '');
 
 if (!article) {

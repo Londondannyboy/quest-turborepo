@@ -12,7 +12,8 @@ if (!databaseUrl) {
 
 initializeSql(databaseUrl);
 
-const siteName = import.meta.env.SITE_NAME?.toLowerCase() || 'placement';
+// Extract just first word of SITE_NAME for database query (e.g., "Placement Quest" -> "placement")
+const siteName = (import.meta.env.SITE_NAME?.split(' ')[0] || 'placement').toLowerCase();
 const recentArticles = await getRecentArticles(siteName, 10);
 ---
 
