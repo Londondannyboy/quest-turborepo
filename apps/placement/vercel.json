@@ -1,4 +1,5 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false
+  "buildCommand": "pnpm install && pnpm run build",
+  "outputDirectory": ".vercel/output",
+  "installCommand": "pnpm install --no-frozen-lockfile"
 }
