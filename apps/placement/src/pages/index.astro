@@ -4,6 +4,8 @@ export const prerender = false;
 import BaseLayout from '@quest/ui/layouts/base.astro';
 import Header from '@quest/ui/components/Header.astro';
 import Hero from '@quest/ui/components/Hero.astro';
+import StatsSection from '@quest/ui/components/StatsSection.astro';
+import WhatWeCover from '@quest/ui/components/WhatWeCover.astro';
 import ArticleCardFeatured from '@quest/ui/components/ArticleCardFeatured.astro';
 import ArticleCardGrid from '@quest/ui/components/ArticleCardGrid.astro';
 import Footer from '@quest/ui/components/Footer.astro';
@@ -27,13 +29,45 @@ const featuredCompanies = await getArticles(siteName, {
   limit: 6,
 });
 
-// Get site info from env
+// Get site info from env with improved copy
 const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
-const siteTagline = import.meta.env.SITE_TAGLINE || 'Expert guidance on private equity fundraising and placement agents';
+const siteTagline = import.meta.env.SITE_TAGLINE || 'Your Ultimate Guide to Private Equity Placement Agents & Fundraising in 2025';
 
 // Separate featured article from grid
 const featuredArticle = recentArticles?.[0];
 const gridArticles = recentArticles?.slice(1) || [];
+
+// Placement-specific stats
+const placementStats = [
+  { number: '50+', label: 'Placement Agents Profiled', icon: 'building' },
+  { number: '150+', label: 'Expert Insights & Guides', icon: 'document' },
+  { number: '$500B+', label: 'Assets Under Management Tracked', icon: 'chart' },
+  { number: '2025', label: 'Updated for Latest Market Trends', icon: 'calendar' },
+];
+
+// Placement-specific topics
+const placementTopics = [
+  {
+    title: 'Placement Agent Profiles',
+    description: 'In-depth profiles of leading placement agents worldwide, including their expertise, track record, and specializations in private equity fundraising.',
+    icon: 'users',
+  },
+  {
+    title: 'Fundraising Strategies',
+    description: 'Expert guidance on successful capital raising strategies, LP engagement, and market positioning for PE funds seeking institutional investors.',
+    icon: 'strategy',
+  },
+  {
+    title: 'Market Intelligence',
+    description: 'Latest trends, deal flow analysis, and insights into the evolving private equity placement landscape across all asset classes.',
+    icon: 'analytics',
+  },
+  {
+    title: 'Regional Coverage',
+    description: 'Comprehensive coverage of placement agents across key markets including US, Europe, Asia-Pacific, and emerging regions worldwide.',
+    icon: 'globe',
+  },
+];
 ---
 
 <BaseLayout title={fullSiteName} description={siteTagline}>
@@ -42,6 +76,13 @@ const gridArticles = recentArticles?.slice(1) || [];
 
   <!-- Hero Section -->
   <Hero siteName={fullSiteName} siteTagline={siteTagline} />
+
+  <!-- Stats Section -->
+  <StatsSection
+    stats={placementStats}
+    heading="Industry-Leading Placement Agent Coverage"
+    subheading="Your comprehensive resource for private equity placement agents and fundraising intelligence"
+  />
 
   <!-- Main Content -->
   <main class="mx-auto max-w-7xl px-4 lg:px-8 py-12 lg:py-16">
@@ -57,11 +98,11 @@ const gridArticles = recentArticles?.slice(1) || [];
 
     {/* Top Placement Agents Section */}
     {featuredCompanies.length > 0 && (
-      <section class="mb-16">
-        <div class="flex items-center justify-between mb-8">
+      <section class="mb-20">
+        <div class="flex items-center justify-between mb-10">
           <div>
-            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">Top Placement Agents</h2>
-            <p class="text-gray-600 dark:text-gray-400">Leading firms helping PE funds raise capital</p>
+            <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-3">Top Placement Agents</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-400">Leading firms helping PE funds raise capital worldwide</p>
           </div>
           <a href="/top-agents" class="inline-flex items-center gap-2 px-4 py-2 text-primary border-2 border-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
             View All
@@ -70,11 +111,11 @@ const gridArticles = recentArticles?.slice(1) || [];
             </svg>
           </a>
         </div>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {featuredCompanies.map((company, index) => (
             <div class={`animate-fade-in-up animation-delay-${Math.min(index, 3) * 100}`}>
               <a href={`/${company.slug}`} class="block group">
-                <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 h-full">
+                <article class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border-2 border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary h-full transform hover:-translate-y-2">
                   <div class="p-6">
                     {company.featured_image_url && (
                       <div class="mb-4 aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
@@ -108,7 +149,19 @@ const gridArticles = recentArticles?.slice(1) || [];
         </div>
       </section>
     )}
+  </main>
 
+  {/* What We Cover Section */}
+  <WhatWeCover
+    topics={placementTopics}
+    heading="What We Cover"
+    subheading="Everything you need to know about private equity placement agents and fundraising success"
+    ctaText="Explore All Placement Agent Content"
+    ctaLink="/articles"
+  />
+
+  <!-- Continue Main Content -->
+  <main class="mx-auto max-w-7xl px-4 lg:px-8 py-12 lg:py-16">
     {/* Recent Articles Grid */}
     {gridArticles.length > 0 && (
       <section>

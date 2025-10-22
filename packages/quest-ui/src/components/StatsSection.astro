@@ -1,0 +1,71 @@
+---
+// Stats/Social Proof Section Component - Generic & Reusable
+const { stats, heading, subheading } = Astro.props;
+
+// Default stats - can be overridden per site
+const defaultStats = [
+  { number: '50+', label: 'Companies Profiled', icon: 'building' },
+  { number: '100+', label: 'Expert Insights & Guides', icon: 'document' },
+  { number: '10K+', label: 'Monthly Readers', icon: 'chart' },
+  { number: '2025', label: 'Updated for Latest Trends', icon: 'calendar' },
+];
+
+const displayStats = stats || defaultStats;
+const displayHeading = heading || 'Industry-Leading Coverage';
+const displaySubheading = subheading || 'Your comprehensive resource for industry insights and intelligence';
+---
+
+<section class="bg-gradient-to-br from-primary/5 via-white to-primary/10 dark:from-primary/10 dark:via-gray-900 dark:to-primary/20 py-16 lg:py-20">
+  <div class="mx-auto max-w-7xl px-4 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        {displayHeading}
+      </h2>
+      <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        {displaySubheading}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      {displayStats.map((stat, index) => (
+        <div class={`text-center animate-fade-in-up animation-delay-${index * 100}`}>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+            {/* Icon */}
+            <div class="mb-4 flex justify-center">
+              {stat.icon === 'building' && (
+                <svg class="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"></path>
+                </svg>
+              )}
+              {stat.icon === 'document' && (
+                <svg class="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                </svg>
+              )}
+              {stat.icon === 'chart' && (
+                <svg class="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                </svg>
+              )}
+              {stat.icon === 'calendar' && (
+                <svg class="w-10 h-10 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                </svg>
+              )}
+            </div>
+
+            {/* Number */}
+            <div class="text-4xl lg:text-5xl font-bold text-primary mb-2">
+              {stat.number}
+            </div>
+
+            {/* Label */}
+            <div class="text-sm lg:text-base text-gray-600 dark:text-gray-300 font-medium">
+              {stat.label}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
