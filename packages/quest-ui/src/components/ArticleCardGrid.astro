@@ -1,0 +1,60 @@
+---
+import type { Article } from '@quest/db';
+
+interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+const publishDate = article.created_at
+  ? new Date(article.created_at).toLocaleDateString('en-GB', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : '';
+---
+
+<article class="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group h-full">
+  <a href={`/${article.slug}`} class="block">
+    {/* Image with 16:9 aspect ratio */}
+    {
+      article.featured_image_url && (
+        <figure class="aspect-video overflow-hidden">
+          <img
+            src={article.featured_image_url}
+            alt={article.title || article.headline_title}
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            loading="lazy"
+          />
+        </figure>
+      )
+    }
+
+    {/* Content */}
+    <div class="card-body">
+      {/* Title */}
+      <h3 class="card-title text-xl font-bold line-clamp-2 group-hover:text-primary transition-colors">
+        {article.title || article.headline_title}
+      </h3>
+
+      {/* Excerpt */}
+      {
+        article.excerpt && (
+          <p class="text-base-content/70 line-clamp-3 text-sm">{article.excerpt}</p>
+        )
+      }
+
+      {/* Metadata */}
+      <div class="flex items-center gap-2 text-xs text-base-content/60 mt-auto pt-4">
+        {publishDate && <time datetime={article.created_at}>{publishDate}</time>}
+        {article.reading_time_minutes && (
+          <>
+            <span>•</span>
+            <span>{article.reading_time_minutes} min read</span>
+          </>
+        )}
+      </div>
+    </div>
+  </a>
+</article>

@@ -1,0 +1,104 @@
+---
+import { getHeroContent } from '../utils/theme';
+
+const { siteName, siteTagline } = Astro.props;
+
+// Get hero content (video or image) with fallback chain
+const heroContent = getHeroContent({
+  THEME_VARIANT: import.meta.env.THEME_VARIANT,
+  HERO_VIDEO_URL: import.meta.env.HERO_VIDEO_URL,
+  HERO_IMAGE_URL: import.meta.env.HERO_IMAGE_URL,
+});
+---
+
+<section class="hero min-h-[60vh] lg:min-h-[70vh] relative overflow-hidden">
+  {/* Background: Video or Image */}
+  {
+    heroContent.type === 'video' ? (
+      <video
+        class="hero-video absolute inset-0 w-full h-full object-cover"
+        autoplay
+        muted
+        loop
+        playsinline
+      >
+        <source src={heroContent.url} type="video/mp4" />
+      </video>
+    ) : (
+      <img
+        src={heroContent.url}
+        alt={siteName}
+        class="hero-image absolute inset-0 w-full h-full object-cover"
+      />
+    )
+  }
+
+  {/* Overlay gradient for text readability */}
+  <div class="hero-overlay bg-opacity-60 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
+
+  {/* Content */}
+  <div class="hero-content text-center text-neutral-content z-10">
+    <div class="max-w-4xl px-4">
+      <h1
+        class="mb-6 text-5xl lg:text-7xl font-bold drop-shadow-2xl animate-fade-in"
+        style="animation-delay: 0.2s"
+      >
+        {siteName}
+      </h1>
+      <p
+        class="mb-8 text-xl lg:text-2xl font-light drop-shadow-lg animate-fade-in"
+        style="animation-delay: 0.4s"
+      >
+        {siteTagline}
+      </p>
+
+      {/* Scroll indicator */}
+      <div class="animate-bounce mt-12" style="animation-delay: 1s">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-8 w-8 mx-auto opacity-75"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Fade-in animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    opacity: 0;
+    animation: fade-in 0.8s ease-out forwards;
+  }
+
+  /* Subtle parallax effect on scroll */
+  .hero {
+    background-attachment: fixed;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .hero-video {
+      display: none;
+    }
+  }
+</style>

@@ -1,16 +1,39 @@
 ---
+import { getThemeName } from '../utils/theme';
+
 const { title, description } = Astro.props;
+
+// Get theme from environment
+const themeVariant = import.meta.env.THEME_VARIANT || 'financial';
+const defaultTheme = getThemeName(themeVariant, false);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme={defaultTheme}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Theme persistence script -->
+    <script is:inline>
+      // Load saved theme or use default
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    </script>
   </head>
-  <body class="min-h-screen bg-white dark:bg-gray-900">
+  <body class="min-h-screen bg-base-100 text-base-content">
     <slot />
   </body>
 </html>

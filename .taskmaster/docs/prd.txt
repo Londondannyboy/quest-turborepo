@@ -1,71 +1,308 @@
-# Placement Quest - Site Beautification PRD
+# Universal Quest Template v1.0 - Front-End Beautification PRD
 
 ## Overview
-Transform the minimal Placement Quest homepage into a professional, modern news/blog site with beautiful design and user experience.
+Transform turbo-clean into a production-ready, universal template for all Quest sites (placement.quest, relocation.quest, mba.quest, etc.) with Bloomberg/FT-level professional design using DaisyUI + Tailwind CSS.
 
 ## Current State
-- Working Turborepo monorepo with Astro SSR + Vercel deployment
-- Homepage displays "Placement Quest" title and "Recent Articles" grid (7-8 articles)
-- Articles fetching from Neon database with working /{slug} pages
-- Basic Tailwind styling, responsive layout
-- Clean codebase with @quest/db, @quest/seo, @quest/ui shared packages
+- Working Turborepo with Astro SSR + Vercel deployment
+- Homepage (index.astro) displays articles from Neon database
+- Article detail page ([slug].astro) with basic styling
+- Minimal Tailwind CSS styling
+- BaseLayout with barebone HTML structure
+- @quest/db package handles database queries (working, don't touch)
+- @quest/ui package for shared components (currently minimal)
 
 ## Goals
-Beautify the site to create a professional, engaging user experience for placement industry news that rivals top financial news sites.
+Create a beautiful, professional, universal template that:
+- Works for all Quest sites with zero configuration
+- Matches placement.quest reference design quality
+- Uses DaisyUI for consistent, themeable components
+- Supports per-site branding via CSS variables
+- Includes hero video/image system
+- Professional blog/articles layout
+- Fast, accessible, SEO-optimized
+
+## Technology Stack
+- **Framework**: Astro SSR
+- **Styling**: Tailwind CSS v4
+- **Component Library**: DaisyUI v5 (zero-JS, CSS-only)
+- **Fonts**: Inter Variable
+- **Animations**: CSS transforms + Intersection Observer
+- **Deployment**: Vercel
+
+## Design System
+
+### DaisyUI Theme Configuration
+- Use DaisyUI's CSS variable system for per-site theming
+- Create 3 theme variants: financial, relocation, education
+- Each site configures via THEME_VARIANT env variable
+- DaisyUI provides: dark mode, professional components, consistent styling
+
+### Color Themes
+**Financial (placement.quest):**
+- Primary: Blue (#0161ef)
+- Secondary: Dark Blue (#0154cf)
+- Accent: Purple (#6d28d9)
+
+**Relocation (relocation.quest):**
+- Primary: Teal (#14b8a6)
+- Secondary: Cyan (#06b6d4)
+- Accent: Emerald (#10b981)
+
+**Education (mba.quest):**
+- Primary: Purple (#8b5cf6)
+- Secondary: Indigo (#6366f1)
+- Accent: Orange (#f97316)
+
+### Typography
+- Font Family: Inter Variable (sans-serif)
+- Headings: Bold, large scale (h1: 3xl-5xl, h2: 2xl-3xl)
+- Body: 16px base, 1.6 line height
+- Professional hierarchy throughout
+
+### Hero System
+- Support for video OR static image
+- Configuration priority:
+  1. HERO_VIDEO_URL (per-app override)
+  2. HERO_IMAGE_URL (per-app override)
+  3. Default theme-based image from Pexels/Unsplash
+- Fallback: Animated gradient matching theme
+- Overlay with site title + tagline
+- Responsive: video desktop, image mobile
+
+### Animation Strategy (Hybrid)
+- **Subtle**: Article cards, page transitions, navigation (FT/Bloomberg style)
+- **Dynamic**: Hero section, featured content (Layrid inspiration)
+- All animations use CSS transforms (performance)
+- Intersection Observer for scroll-triggered effects
 
 ## Priority Tasks
 
-### Phase 1: Visual Polish (Immediate)
-1. Enhance hero section with gradient background and better typography
-2. Improve article cards with shadows, hover effects, and better images
-3. Add professional header with logo and navigation
-4. Create comprehensive footer with links and social
-5. Implement smooth animations and transitions
+### Phase 1: Foundation & Design System (Tasks 1-6)
 
-### Phase 2: Layout & Navigation
-6. Add featured article section (showcase top story with large card)
-7. Create category badges/tags for articles
-8. Implement sticky navigation on scroll
-9. Add mobile hamburger menu
-10. Create sidebar with trending/popular articles
+**Task 1: Install and Configure DaisyUI**
+- Add DaisyUI to packages/quest-ui
+- Configure tailwind.config with DaisyUI plugin
+- Create 3 custom themes (financial, relocation, education)
+- Set up CSS variable system for per-site theming
+- Test theme switching
 
-### Phase 3: Article Pages
-11. Enhance article detail page typography and layout
-12. Add author information and avatar
-13. Implement related articles section
-14. Add social share buttons (Twitter, LinkedIn, Email)
-15. Improve code block and quote styling
+**Task 2: Create Theme Configuration System**
+- Add theme utility in @quest/ui
+- Read THEME_VARIANT from env
+- Apply DaisyUI theme dynamically
+- Document theme customization for new sites
 
-### Phase 4: Advanced Features
-16. Add dark/light mode toggle
-17. Implement search functionality
-18. Add category filtering
-19. Create pagination for article lists
-20. Add newsletter signup form
+**Task 3: Build Professional Header Component**
+- Use DaisyUI navbar component as base
+- Logo/site name area (left)
+- Navigation: Home, Articles, About (center/right)
+- Dark mode toggle (DaisyUI theme-controller)
+- Mobile hamburger menu (DaisyUI dropdown)
+- Sticky on scroll behavior
+- Responsive design
 
-### Phase 5: Performance & SEO
-21. Optimize images with next-gen formats
-22. Add OpenGraph meta tags for social sharing
-23. Implement article JSON-LD schema
-24. Add sitemap generation
-25. Performance optimization (<2s page load)
+**Task 4: Create Hero Video/Image Component**
+- Support video background (with controls)
+- Support static hero image
+- Environment variable configuration (HERO_VIDEO_URL, HERO_IMAGE_URL)
+- Default theme-based imagery (financial: boardroom, relocation: city, education: campus)
+- Gradient overlay for text readability
+- Site title + tagline overlay
+- Scroll indicator animation
+- Responsive: video on desktop, image on mobile
 
-## Design Inspiration
-- Financial Times, Bloomberg, TechCrunch
-- Clean, professional, data-driven aesthetic
-- Emphasis on readability and content hierarchy
-- Subtle animations, not flashy
+**Task 5: Design Article Card Components**
+- Featured article card (DaisyUI card + badge)
+  - Large format with image left, content right
+  - Category badge, title, excerpt, metadata
+  - Hover effects (DaisyUI animation utilities)
+- Grid article card (DaisyUI card)
+  - 16:9 image aspect ratio
+  - Title, excerpt (line-clamp-3), metadata
+  - Smooth hover lift + shadow
+- Consistent typography and spacing
+
+**Task 6: Build Professional Footer**
+- Multi-column layout using DaisyUI grid
+- Sections: About, Quick Links, Social, Newsletter
+- Newsletter form (DaisyUI form components)
+- Social icons placeholders
+- Copyright and legal links
+- Responsive: columns stack on mobile
+
+### Phase 2: Page Implementation (Tasks 7-12)
+
+**Task 7: Beautify Homepage (index.astro)**
+- Add Header component
+- Add Hero component (video/image)
+- Featured article section (top story, large card)
+- Article grid (recent articles, 3-column, existing query)
+- Add Footer component
+- Scroll animations (fade-in, stagger)
+- Keep existing database queries unchanged
+
+**Task 8: Create /articles Page**
+- Full article listing (paginated)
+- Classic blog layout: image left, content right
+- Use existing getArticles query with pagination
+- DaisyUI pagination component
+- Same header/footer as homepage
+- Responsive: stacks on mobile
+
+**Task 9: Enhance Article Detail Page ([slug].astro)**
+- Better typography (DaisyUI prose + custom)
+- Hero image treatment
+- Author info section (placeholder with DaisyUI avatar)
+- Reading progress indicator
+- Article metadata (date, reading time, category)
+- Improved code blocks and quotes styling
+- Keep existing database query unchanged
+
+**Task 10: Add Related Articles Section**
+- "You May Also Like" section at article bottom
+- Query 3-4 articles from same target_site
+- Horizontal grid of article cards
+- Use existing database connection
+
+**Task 11: Create About Page Template**
+- Hero section with mission statement
+- Team section (placeholder with DaisyUI cards)
+- Newsletter signup (DaisyUI form)
+- Professional layout with header/footer
+
+**Task 12: Build 404 Page**
+- Branded error message
+- DaisyUI alert component
+- Navigation back to home (DaisyUI button)
+- 3 suggested articles
+- Same header/footer
+
+### Phase 3: Polish & Features (Tasks 13-18)
+
+**Task 13: Implement Dark Mode**
+- DaisyUI theme controller in header
+- Light/dark theme toggle
+- Persist preference (localStorage)
+- Smooth transitions
+- Test all components in both modes
+
+**Task 14: Add Scroll Animations**
+- Intersection Observer utility
+- Fade-in for article cards (staggered)
+- Parallax on hero section
+- Smooth entrance animations
+- Performance-optimized (passive listeners)
+
+**Task 15: Mobile Optimization**
+- Touch-friendly tap targets (48px min)
+- Optimized images for mobile
+- Test on iOS Safari and Android Chrome
+- Hamburger menu smooth animation
+- Responsive typography scaling
+
+**Task 16: Performance Optimization**
+- Image lazy loading (native + Astro optimization)
+- Tailwind CSS purge configuration
+- Minimize bundle size (DaisyUI already CSS-only)
+- Code splitting for client components
+- Target <2s page load time
+
+**Task 17: Accessibility Audit**
+- ARIA labels for all interactive elements
+- Keyboard navigation testing
+- Screen reader optimization
+- Color contrast compliance (WCAG AA)
+- Focus visible states on all controls
+- Skip to content link
+
+**Task 18: SEO Enhancement**
+- Dynamic OpenGraph meta tags
+- JSON-LD structured data (Article schema)
+- Canonical URLs for all pages
+- XML sitemap generation
+- robots.txt configuration
+
+### Phase 4: Testing & Documentation (Tasks 19-20)
+
+**Task 19: Cross-Site Theme Testing**
+- Test financial theme (placement.quest colors)
+- Test relocation theme (teal colors)
+- Test education theme (purple colors)
+- Verify all DaisyUI components work with each theme
+- Test dark mode with all themes
+- Document any theme-specific adjustments
+
+**Task 20: Documentation & Deployment**
+- Create README for adding new Quest sites
+- Document environment variables required
+- Document theme customization process
+- Create example .env file
+- Deploy to Vercel (turbo-p)
+- Verify production build works
+
+## Configuration Structure
+
+### Environment Variables (per app)
+```
+# Required
+DATABASE_URL="postgresql://..."
+SITE_NAME="Placement Quest"
+SITE_TAGLINE="Navigate the evolving landscape"
+
+# Theme Configuration
+THEME_VARIANT="financial"  # or "relocation", "education"
+
+# Optional Customization
+PRIMARY_COLOR="#0161ef"     # Override theme primary
+SECONDARY_COLOR="#0154cf"   # Override theme secondary
+ACCENT_COLOR="#6d28d9"      # Override theme accent
+
+# Hero Configuration (optional)
+HERO_VIDEO_URL="https://..."    # Video URL (YouTube, Vimeo, or direct)
+HERO_IMAGE_URL="https://..."    # Or static image URL
+```
+
+### Default Theme Mappings
+- **financial**: Blue corporate palette, boardroom/office imagery
+- **relocation**: Teal/green palette, city/moving imagery
+- **education**: Purple/orange palette, campus/graduation imagery
 
 ## Success Criteria
-- Professional design that competes with top news sites
-- Fast page load times (<2s)
-- Mobile responsive on all devices
-- Accessible (WCAG AA)
-- SEO optimized for Google News
+- ✅ Professional design matching placement.quest reference
+- ✅ <2s page load time (Lighthouse performance >90)
+- ✅ Mobile responsive on all devices
+- ✅ Accessible (WCAG AA compliance)
+- ✅ Dark mode fully functional
+- ✅ Zero-configuration for new Quest sites (sensible defaults)
+- ✅ DaisyUI components working across all themes
+- ✅ SEO optimized (meta tags, structured data, sitemap)
+- ✅ No breaking changes to existing database queries
 
 ## Technical Constraints
 - Must work with existing Turborepo structure
-- Keep minimal dependencies
-- No heavy frameworks (stay with Astro + Tailwind)
+- Keep @quest/db package untouched (database layer working)
 - Maintain SSR for SEO
+- DaisyUI CSS-only (no JavaScript dependencies)
 - Vercel serverless function limits
+- Support all modern browsers (last 2 versions)
+
+## Out of Scope (Future Phases)
+- Search functionality (Phase 5)
+- Category filtering (Phase 5)
+- Newsletter backend integration (Phase 5)
+- User authentication (Future)
+- Comments system (Future)
+- Admin dashboard (Future)
+
+## Deliverables
+1. Updated @quest/ui package with DaisyUI components
+2. Enhanced BaseLayout with header/footer
+3. Beautified homepage (index.astro) with hero
+4. New /articles listing page
+5. Enhanced article detail page ([slug].astro)
+6. Theme configuration system (3 variants)
+7. About and 404 pages
+8. Dark mode implementation
+9. Scroll animations
+10. Complete documentation for adding new Quest sites

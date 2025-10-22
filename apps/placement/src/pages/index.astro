@@ -2,6 +2,11 @@
 export const prerender = false;
 
 import BaseLayout from '@quest/ui/layouts/base.astro';
+import Header from '@quest/ui/components/Header.astro';
+import Hero from '@quest/ui/components/Hero.astro';
+import ArticleCardFeatured from '@quest/ui/components/ArticleCardFeatured.astro';
+import ArticleCardGrid from '@quest/ui/components/ArticleCardGrid.astro';
+import Footer from '@quest/ui/components/Footer.astro';
 import { initializeSql, getRecentArticles } from '@quest/db';
 
 // Initialize Neon - handle missing DATABASE_URL gracefully
@@ -15,66 +20,68 @@ initializeSql(databaseUrl);
 // Extract just first word of SITE_NAME for database query (e.g., "Placement Quest" -> "placement")
 const siteName = (import.meta.env.SITE_NAME?.split(' ')[0] || 'placement').toLowerCase();
 const recentArticles = await getRecentArticles(siteName, 10);
+
+// Get site info from env
+const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
+const siteTagline = import.meta.env.SITE_TAGLINE || 'Navigate the evolving landscape';
+const themeVariant = import.meta.env.THEME_VARIANT || 'financial';
+
+// Separate featured article from grid
+const featuredArticle = recentArticles?.[0];
+const gridArticles = recentArticles?.slice(1) || [];
 ---
 
-<BaseLayout
-  title={import.meta.env.SITE_NAME || 'Placement'}
-  description={import.meta.env.SITE_TAGLINE || 'Navigate the evolving landscape'}
->
-  <div class="mx-auto max-w-6xl px-4 py-8">
-    <section class="mb-12 text-center">
-      <h1 class="mb-4 text-5xl font-bold text-gray-900 dark:text-white">
-        {import.meta.env.SITE_NAME || 'Placement'}
-      </h1>
-      <p class="text-xl text-gray-600 dark:text-gray-400">
-        {import.meta.env.SITE_TAGLINE || 'Navigate the evolving landscape'}
-      </p>
-    </section>
+<BaseLayout title={fullSiteName} description={siteTagline}>
+  <!-- Header -->
+  <Header siteName={fullSiteName} themeVariant={themeVariant} />
 
-    {recentArticles && recentArticles.length > 0 && (
+  <!-- Hero Section -->
+  <Hero siteName={fullSiteName} siteTagline={siteTagline} />
+
+  <!-- Main Content -->
+  <main class="mx-auto max-w-7xl px-4 lg:px-8 py-12 lg:py-16">
+    {/* Featured Article Section */}
+    {featuredArticle && (
+      <section class="mb-16">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl lg:text-4xl font-bold">Featured Story</h2>
+        </div>
+        <ArticleCardFeatured article={featuredArticle} />
+      </section>
+    )}
+
+    {/* Recent Articles Grid */}
+    {gridArticles.length > 0 && (
       <section>
-        <h2 class="mb-8 text-3xl font-bold text-gray-900 dark:text-white">Recent Articles</h2>
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl lg:text-4xl font-bold">Recent Articles</h2>
+          <a href="/articles" class="btn btn-primary btn-outline btn-sm">
+            View All
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </a>
+        </div>
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {recentArticles.map((article) => (
-            <article class="rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow dark:border-gray-700">
-              <a href={`/${article.slug}`} class="group">
-                {article.featured_image_url && (
-                  <img
-                    src={article.featured_image_url}
-                    alt={article.title || article.headline_title}
-                    class="mb-4 w-full h-48 rounded object-cover"
-                  />
-                )}
-                <h3 class="mb-2 text-xl font-semibold group-hover:text-blue-600 dark:text-white">
-                  {article.title || article.headline_title}
-                </h3>
-                {article.excerpt && (
-                  <p class="mb-4 text-gray-600 line-clamp-3 dark:text-gray-400">
-                    {article.excerpt}
-                  </p>
-                )}
-                <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-500">
-                  {article.created_at && (
-                    <time datetime={article.created_at}>
-                      {new Date(article.created_at).toLocaleDateString('en-GB', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </time>
-                  )}
-                  {article.reading_time_minutes && (
-                    <>
-                      <span>•</span>
-                      <span>{article.reading_time_minutes} min read</span>
-                    </>
-                  )}
-                </div>
-              </a>
-            </article>
+          {gridArticles.map((article) => (
+            <ArticleCardGrid article={article} />
           ))}
         </div>
       </section>
     )}
-  </div>
+  </main>
+
+  <!-- Footer -->
+  <Footer siteName={fullSiteName} />
 </BaseLayout>
