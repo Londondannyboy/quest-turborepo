@@ -1,0 +1,64 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@quest/ui/layouts/base.astro';
+import Header from '@quest/ui/components/Header.astro';
+import Footer from '@quest/ui/components/Footer.astro';
+import ArticleCardGrid from '@quest/ui/components/ArticleCardGrid.astro';
+import { initializeSql, getRecentArticles } from '@quest/db';
+
+// Initialize Neon
+const databaseUrl = import.meta.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL environment variable is not set.');
+}
+
+initializeSql(databaseUrl);
+
+// Get site info
+const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
+const siteName = (fullSiteName.split(' ')[0] || 'placement').toLowerCase();
+
+// Fetch all articles (limit 50 for now, can add pagination later)
+const articles = await getRecentArticles(siteName, 50);
+---
+
+<BaseLayout title={`Articles - ${fullSiteName}`} description={`Browse all articles on ${fullSiteName}`}>
+  <!-- Header -->
+  <Header siteName={fullSiteName} />
+
+  <!-- Articles Page Hero -->
+  <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16 lg:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold mb-4">Articles</h1>
+      <p class="text-xl lg:text-2xl text-gray-100 font-light max-w-3xl mx-auto">
+        Comprehensive insights and analysis for industry professionals
+      </p>
+      <div class="mt-8 text-lg text-gray-200">
+        {articles.length} {articles.length === 1 ? 'article' : 'articles'} available
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    {articles.length > 0 ? (
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {articles.map((article) => (
+          <ArticleCardGrid article={article} />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16">
+        <svg class="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Articles Yet</h2>
+        <p class="text-gray-600 dark:text-gray-400">Check back soon for new content!</p>
+      </div>
+    )}
+  </main>
+
+  <!-- Footer -->
+  <Footer siteName={fullSiteName} />
+</BaseLayout>
