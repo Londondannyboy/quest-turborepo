@@ -1,3 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Enhanced prose styling for article content */
+@layer base {
+  /* Ensure links in articles are visible and styled */
+  article a:not(.btn) {
+    @apply text-primary underline decoration-2 underline-offset-2 hover:text-primary-dark transition-colors;
+  }
+
+  article h1 {
+    @apply text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mt-8 mb-4;
+  }
+
+  article h2 {
+    @apply text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-8 mb-4;
+  }
+
+  article h3 {
+    @apply text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-6 mb-3;
+  }
+
+  article h4 {
+    @apply text-xl md:text-2xl font-bold text-gray-900 dark:text-white mt-6 mb-3;
+  }
+
+  article p {
+    @apply text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-4;
+  }
+
+  article ul, article ol {
+    @apply text-lg text-gray-700 dark:text-gray-300 ml-6 mb-4;
+  }
+
+  article li {
+    @apply mb-2;
+  }
+
+  article blockquote {
+    @apply border-l-4 border-primary bg-gray-50 dark:bg-gray-800 py-3 px-6 my-4 italic;
+  }
+
+  article code {
+    @apply text-primary bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-base;
+  }
+
+  article pre {
+    @apply bg-gray-900 dark:bg-gray-950 text-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+  }
+
+  article pre code {
+    @apply bg-transparent text-gray-100 p-0;
+  }
+
+  article img {
+    @apply rounded-xl shadow-lg my-6;
+  }
+
+  article strong, article b {
+    @apply font-bold text-gray-900 dark:text-white;
+  }
+
+  article em, article i {
+    @apply italic;
+  }
+}

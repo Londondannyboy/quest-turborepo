@@ -104,18 +104,7 @@ const publishDate = article.created_at
 
     <!-- Article Body -->
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div
-        class="prose prose-lg lg:prose-xl dark:prose-invert max-w-none
-               prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white
-               prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed
-               prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-               prose-strong:text-gray-900 dark:prose-strong:text-white
-               prose-img:rounded-xl prose-img:shadow-lg
-               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800 prose-blockquote:py-2 prose-blockquote:px-6
-               prose-code:text-primary prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-               prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950"
-        set:html={article.article_body || article.content}
-      />
+      <div class="article-content" set:html={article.article_body || article.content} />
     </div>
 
     <!-- Back to Articles Link -->
