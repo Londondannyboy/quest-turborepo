@@ -22,6 +22,12 @@ const currentPath = Astro.url.pathname;
           Home
         </a>
         <a
+          href="/top-agents"
+          class={`text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors ${currentPath === '/top-agents' ? 'text-primary font-semibold' : ''}`}
+        >
+          Top Agents
+        </a>
+        <a
           href="/articles"
           class={`text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors ${currentPath === '/articles' ? 'text-primary font-semibold' : ''}`}
         >
@@ -69,6 +75,12 @@ const currentPath = Astro.url.pathname;
           class={`px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 ${currentPath === '/' ? 'bg-gray-100 dark:bg-gray-800 text-primary font-semibold' : ''}`}
         >
           Home
+        </a>
+        <a
+          href="/top-agents"
+          class={`px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 ${currentPath === '/top-agents' ? 'bg-gray-100 dark:bg-gray-800 text-primary font-semibold' : ''}`}
+        >
+          Top Agents
         </a>
         <a
           href="/articles"
