@@ -11,13 +11,32 @@ const heroContent = getHeroContent({
 ---
 
 <section class="relative min-h-[60vh] lg:min-h-[70vh] flex items-center justify-center overflow-hidden bg-gray-900">
-  {/* Background Image */}
+  {/* Background - Video or Image */}
   <div class="absolute inset-0">
-    <img
-      src={heroContent.url}
-      alt={siteName}
-      class="w-full h-full object-cover opacity-50"
-    />
+    {heroContent.type === 'video' ? (
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        class="w-full h-full object-cover opacity-40"
+      >
+        <source src={heroContent.url} type="video/mp4" />
+        {/* Fallback to image if video fails */}
+        <img
+          src={import.meta.env.HERO_IMAGE_URL || 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=1920'}
+          alt={siteName}
+          class="w-full h-full object-cover opacity-50"
+        />
+      </video>
+    ) : (
+      <img
+        src={heroContent.url}
+        alt={siteName}
+        class="w-full h-full object-cover opacity-50"
+        loading="eager"
+      />
+    )}
     <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
   </div>
 

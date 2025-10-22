@@ -25,6 +25,7 @@ const publishDate = article.created_at
           alt={article.title || article.headline_title}
           class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
+          decoding="async"
         />
       ) : (
         <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary-dark">

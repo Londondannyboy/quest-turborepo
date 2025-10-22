@@ -62,8 +62,10 @@ const gridArticles = recentArticles?.slice(1) || [];
           </a>
         </div>
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {gridArticles.map((article) => (
-            <ArticleCardGrid article={article} />
+          {gridArticles.map((article, index) => (
+            <div class={`animate-fade-in-up animation-delay-${Math.min(index, 3) * 100}`}>
+              <ArticleCardGrid article={article} />
+            </div>
           ))}
         </div>
       </section>

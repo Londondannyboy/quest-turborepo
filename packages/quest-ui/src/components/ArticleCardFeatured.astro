@@ -23,7 +23,9 @@ const publishDate = article.created_at
         src={article.featured_image_url}
         alt={article.title || article.headline_title}
         class="w-full h-64 lg:h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        loading="lazy"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
       />
     ) : (
       <div class="w-full h-64 lg:h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary-dark">
