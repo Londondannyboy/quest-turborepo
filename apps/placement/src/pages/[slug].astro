@@ -47,6 +47,10 @@ const htmlContent = await marked(articleContent, {
 <BaseLayout
   title={article.title || article.headline_title}
   description={article.meta_description || article.excerpt || ''}
+  image={article.featured_image_url}
+  article={true}
+  publishedTime={article.created_at}
+  modifiedTime={article.updated_at}
 >
   <!-- Header -->
   <Header siteName={fullSiteName} />
