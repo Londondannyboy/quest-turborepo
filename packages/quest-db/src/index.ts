@@ -76,10 +76,11 @@ export async function getArticles(
     contentType?: string;
     limit?: number;
     offset?: number;
+    excludeHero?: boolean; // Exclude hero articles from results
   }
 ): Promise<Article[]> {
   const sql = getSql();
-  const { contentType, limit = 100, offset = 0 } = options || {};
+  const { contentType, limit = 100, offset = 0, excludeHero = false } = options || {};
 
   let query = `
     SELECT * FROM articles
@@ -89,6 +90,11 @@ export async function getArticles(
 
   const params: any[] = [site];
   let paramIndex = 2;
+
+  // Exclude hero articles if requested
+  if (excludeHero) {
+    query += ` AND (content_type IS NULL OR content_type != 'hero')`;
+  }
 
   if (contentType) {
     query += ` AND content_type = $${paramIndex}`;
@@ -122,23 +128,23 @@ export async function getArticleBySlug(
 }
 
 /**
- * Get recent articles for homepage
+ * Get recent articles for homepage (excludes hero articles)
  */
 export async function getFeaturedArticles(
   site: string,
   limit: number = 5
 ): Promise<Article[]> {
-  return getArticles(site, { limit });
+  return getArticles(site, { limit, excludeHero: true });
 }
 
 /**
- * Get recent articles (alias for getFeaturedArticles)
+ * Get recent articles (excludes hero articles)
  */
 export async function getRecentArticles(
   site: string,
   limit: number = 10
 ): Promise<Article[]> {
-  return getArticles(site, { limit });
+  return getArticles(site, { limit, excludeHero: true });
 }
 
 /**
