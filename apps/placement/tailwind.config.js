@@ -1,7 +1,7 @@
-import questUIConfig from '@quest/ui/tailwind.config.js';
+const questUIConfig = require('@quest/ui/tailwind.config.js');
 
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   ...questUIConfig,
   content: [
     './src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}',

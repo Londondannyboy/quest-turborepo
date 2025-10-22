@@ -13,8 +13,11 @@
     "@quest/db": "workspace:*",
     "@quest/seo": "workspace:*",
     "@quest/ui": "workspace:*",
-    "astro": "^5.14.8",
-    "tailwindcss": "^4.1.15",
-    "@tailwindcss/vite": "^4.1.15"
+    "astro": "^5.14.8"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^6.0.2",
+    "autoprefixer": "^10.4.21",
+    "tailwindcss": "^3"
   }
 }
