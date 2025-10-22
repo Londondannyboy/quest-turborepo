@@ -1,0 +1,9 @@
+{
+  "name": "@quest/ui",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    "./layouts/*": "./src/layouts/*",
+    "./components/*": "./src/components/*"
+  }
+}

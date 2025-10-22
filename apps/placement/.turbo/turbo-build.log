@@ -1,0 +1,25 @@
+
+> placement@1.0.0 build /Users/dankeegan/turbo-clean/apps/placement
+> astro build
+
+16:10:37 [content] Syncing content
+16:10:37 [content] Synced content
+16:10:37 [types] Generated 215ms
+16:10:37 [build] output: "server"
+16:10:37 [build] mode: "server"
+16:10:37 [build] directory: /Users/dankeegan/turbo-clean/apps/placement/dist/
+16:10:37 [build] adapter: @astrojs/vercel
+16:10:37 [build] Collecting build info...
+16:10:37 [build] ✓ Completed in 222ms.
+16:10:37 [build] Building server entrypoints...
+16:10:38 [vite] ✓ built in 488ms
+16:10:38 [build] ✓ Completed in 505ms.
+
+ prerendering static routes 
+16:10:38 ✓ Completed in 5ms.
+
+16:10:38 [build] Rearranging server assets...
+16:10:38 [@astrojs/vercel] Bundling function ../../../../dist/server/entry.mjs
+16:10:38 [@astrojs/vercel] Copying static files to .vercel/output/static
+16:10:38 [build] Server built in 1.01s
+16:10:38 [build] Complete!
