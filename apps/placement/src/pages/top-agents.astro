@@ -18,9 +18,9 @@ initializeSql(databaseUrl);
 const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
 const siteName = (fullSiteName.split(' ')[0] || 'placement').toLowerCase();
 
-// Fetch all company profile articles
+// Fetch all company profile articles (not articles ABOUT companies)
 const companies = await getArticles(siteName, {
-  contentType: 'company',
+  contentType: 'company_profile',
   limit: 100,
 });
 
