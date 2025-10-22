@@ -1,0 +1,71 @@
+# Placement Quest - Site Beautification PRD
+
+## Overview
+Transform the minimal Placement Quest homepage into a professional, modern news/blog site with beautiful design and user experience.
+
+## Current State
+- Working Turborepo monorepo with Astro SSR + Vercel deployment
+- Homepage displays "Placement Quest" title and "Recent Articles" grid (7-8 articles)
+- Articles fetching from Neon database with working /{slug} pages
+- Basic Tailwind styling, responsive layout
+- Clean codebase with @quest/db, @quest/seo, @quest/ui shared packages
+
+## Goals
+Beautify the site to create a professional, engaging user experience for placement industry news that rivals top financial news sites.
+
+## Priority Tasks
+
+### Phase 1: Visual Polish (Immediate)
+1. Enhance hero section with gradient background and better typography
+2. Improve article cards with shadows, hover effects, and better images
+3. Add professional header with logo and navigation
+4. Create comprehensive footer with links and social
+5. Implement smooth animations and transitions
+
+### Phase 2: Layout & Navigation
+6. Add featured article section (showcase top story with large card)
+7. Create category badges/tags for articles
+8. Implement sticky navigation on scroll
+9. Add mobile hamburger menu
+10. Create sidebar with trending/popular articles
+
+### Phase 3: Article Pages
+11. Enhance article detail page typography and layout
+12. Add author information and avatar
+13. Implement related articles section
+14. Add social share buttons (Twitter, LinkedIn, Email)
+15. Improve code block and quote styling
+
+### Phase 4: Advanced Features
+16. Add dark/light mode toggle
+17. Implement search functionality
+18. Add category filtering
+19. Create pagination for article lists
+20. Add newsletter signup form
+
+### Phase 5: Performance & SEO
+21. Optimize images with next-gen formats
+22. Add OpenGraph meta tags for social sharing
+23. Implement article JSON-LD schema
+24. Add sitemap generation
+25. Performance optimization (<2s page load)
+
+## Design Inspiration
+- Financial Times, Bloomberg, TechCrunch
+- Clean, professional, data-driven aesthetic
+- Emphasis on readability and content hierarchy
+- Subtle animations, not flashy
+
+## Success Criteria
+- Professional design that competes with top news sites
+- Fast page load times (<2s)
+- Mobile responsive on all devices
+- Accessible (WCAG AA)
+- SEO optimized for Google News
+
+## Technical Constraints
+- Must work with existing Turborepo structure
+- Keep minimal dependencies
+- No heavy frameworks (stay with Astro + Tailwind)
+- Maintain SSR for SEO
+- Vercel serverless function limits
