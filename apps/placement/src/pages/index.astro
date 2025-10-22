@@ -41,12 +41,12 @@ const siteTagline = import.meta.env.SITE_TAGLINE || 'Your Ultimate Guide to Priv
 const featuredArticle = recentArticles?.[0];
 const gridArticles = recentArticles?.slice(1) || [];
 
-// Placement-specific stats
+// Site stats (holistic, factually accurate)
 const placementStats = [
-  { number: '50+', label: 'Placement Agents Profiled', icon: 'building' },
-  { number: '150+', label: 'Expert Insights & Guides', icon: 'document' },
-  { number: '$500B+', label: 'Assets Under Management Tracked', icon: 'chart' },
-  { number: '6', label: 'Global Financial Centers Covered', icon: 'globe' },
+  { number: 'Comprehensive', label: 'Industry Coverage', icon: 'building' },
+  { number: 'Expert', label: 'Insights & Analysis', icon: 'document' },
+  { number: 'Global', label: 'Market Intelligence', icon: 'chart' },
+  { number: 'Multi-City', label: 'Geographic Reach', icon: 'globe' },
 ];
 
 // Placement-specific topics
@@ -151,8 +151,8 @@ const howItWorksBlocks = [
   <!-- Stats Section -->
   <StatsSection
     stats={placementStats}
-    heading="Industry-Leading Placement Agent Coverage"
-    subheading="Your comprehensive resource for private equity placement agents and fundraising intelligence"
+    heading="Comprehensive Industry Resource"
+    subheading="In-depth coverage of private equity placement agents and fundraising strategies"
   />
 
   <!-- Main Content -->
