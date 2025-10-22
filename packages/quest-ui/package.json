@@ -7,5 +7,8 @@
     "./components/*": "./src/components/*",
     "./utils/*": "./src/utils/*",
     "./tailwind.config.js": "./tailwind.config.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19"
   }
 }

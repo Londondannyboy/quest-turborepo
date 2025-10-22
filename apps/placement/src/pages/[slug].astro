@@ -2,6 +2,8 @@
 export const prerender = false;
 
 import BaseLayout from '@quest/ui/layouts/base.astro';
+import Header from '@quest/ui/components/Header.astro';
+import Footer from '@quest/ui/components/Footer.astro';
 import { initializeSql, getArticleBySlug } from '@quest/db';
 
 // Initialize Neon - handle missing DATABASE_URL gracefully
@@ -20,54 +22,116 @@ const article = await getArticleBySlug(siteName, slug || '');
 if (!article) {
   return Astro.redirect('/404');
 }
+
+// Get site info from env
+const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
+
+// Format publish date
+const publishDate = article.created_at
+  ? new Date(article.created_at).toLocaleDateString('en-GB', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : '';
 ---
 
 <BaseLayout
   title={article.title || article.headline_title}
   description={article.meta_description || article.excerpt || ''}
 >
-  <article class="mx-auto max-w-4xl px-4 py-8">
-    <header class="mb-8">
-      <h1 class="mb-4 text-4xl font-bold text-gray-900 dark:text-white">
-        {article.title || article.headline_title}
-      </h1>
+  <!-- Header -->
+  <Header siteName={fullSiteName} />
 
-      {article.excerpt && (
-        <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">
-          {article.excerpt}
-        </p>
-      )}
-
-      {article.featured_image_url && (
+  <!-- Article Hero Section -->
+  <article class="bg-white dark:bg-gray-900">
+    <!-- Featured Image Hero -->
+    {article.featured_image_url && (
+      <div class="relative h-[50vh] lg:h-[60vh] overflow-hidden bg-gray-900">
         <img
           src={article.featured_image_url}
           alt={article.title || article.headline_title}
-          class="w-full rounded-lg"
+          class="w-full h-full object-cover opacity-60"
         />
-      )}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
 
-      <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500 mt-4">
-        {article.created_at && (
-          <time datetime={article.created_at}>
-            {new Date(article.created_at).toLocaleDateString('en-GB', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </time>
-        )}
-        {article.reading_time_minutes && (
-          <>
-            <span>•</span>
-            <span>{article.reading_time_minutes} min read</span>
-          </>
-        )}
+        <!-- Title Overlay on Image -->
+        <div class="absolute inset-0 flex items-end">
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 w-full">
+            <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4 leading-tight">
+              {article.title || article.headline_title}
+            </h1>
+            <div class="flex items-center gap-4 text-sm text-gray-200">
+              {publishDate && <time datetime={article.created_at}>{publishDate}</time>}
+              {article.reading_time_minutes && (
+                <>
+                  <span>•</span>
+                  <span>{article.reading_time_minutes} min read</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-    </header>
+    )}
 
-    <div
-      class="prose prose-lg dark:prose-invert max-w-none"
-      set:html={article.article_body || article.content}
-    />
+    <!-- No Image: Traditional Header -->
+    {!article.featured_image_url && (
+      <header class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+        <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+          {article.title || article.headline_title}
+        </h1>
+        <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+          {publishDate && <time datetime={article.created_at}>{publishDate}</time>}
+          {article.reading_time_minutes && (
+            <>
+              <span>•</span>
+              <span>{article.reading_time_minutes} min read</span>
+            </>
+          )}
+        </div>
+      </header>
+    )}
+
+    <!-- Excerpt -->
+    {article.excerpt && (
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-gray-200 dark:border-gray-700">
+        <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed font-light">
+          {article.excerpt}
+        </p>
+      </div>
+    )}
+
+    <!-- Article Body -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div
+        class="prose prose-lg lg:prose-xl dark:prose-invert max-w-none
+               prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white
+               prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed
+               prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+               prose-strong:text-gray-900 dark:prose-strong:text-white
+               prose-img:rounded-xl prose-img:shadow-lg
+               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-800 prose-blockquote:py-2 prose-blockquote:px-6
+               prose-code:text-primary prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+               prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950"
+        set:html={article.article_body || article.content}
+      />
+    </div>
+
+    <!-- Back to Articles Link -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Home
+      </a>
+    </div>
   </article>
+
+  <!-- Footer -->
+  <Footer siteName={fullSiteName} />
 </BaseLayout>
