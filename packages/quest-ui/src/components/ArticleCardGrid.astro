@@ -44,7 +44,7 @@ const publishDate = article.created_at
 
       {article.excerpt && (
         <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3 flex-1">
-          {article.excerpt}
+          {article.excerpt.replace(/<[^>]*>/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}
         </p>
       )}
 

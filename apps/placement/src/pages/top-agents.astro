@@ -1,0 +1,133 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@quest/ui/layouts/base.astro';
+import Header from '@quest/ui/components/Header.astro';
+import Footer from '@quest/ui/components/Footer.astro';
+import { initializeSql, getArticles } from '@quest/db';
+
+// Initialize Neon
+const databaseUrl = import.meta.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL environment variable is not set.');
+}
+
+initializeSql(databaseUrl);
+
+// Get site info
+const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
+const siteName = (fullSiteName.split(' ')[0] || 'placement').toLowerCase();
+
+// Fetch all company profile articles
+const companies = await getArticles(siteName, {
+  contentType: 'company',
+  limit: 100,
+});
+
+// Sort by rank/title
+const sortedCompanies = companies.sort((a, b) => {
+  // If we have ranks, sort by that
+  if (a.title && b.title) {
+    return a.title.localeCompare(b.title);
+  }
+  return 0;
+});
+---
+
+<BaseLayout
+  title={`Top Private Equity Placement Agents 2025 - ${fullSiteName}`}
+  description="Comprehensive profiles of the world's leading private equity placement agents. Compare specialties, fee structures, and track records."
+>
+  <!-- Header -->
+  <Header siteName={fullSiteName} />
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16 lg:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl">
+        <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 animate-fade-in">
+          Top Private Equity Placement Agents 2025
+        </h1>
+        <p class="text-xl lg:text-2xl text-gray-100 font-light mb-8 animate-fade-in animation-delay-100">
+          Comprehensive profiles of the world's leading placement agents. Compare specialties, fee structures, geographic focus, and track records to find the right partner for your fundraising needs.
+        </p>
+        <div class="flex items-center gap-4 text-lg animate-fade-in animation-delay-200">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>{companies.length} Verified Agents</span>
+          </div>
+          <span>•</span>
+          <span>Updated 2025</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    {companies.length > 0 ? (
+      <div class="space-y-6">
+        {sortedCompanies.map((company, index) => (
+          <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 animate-fade-in-up" style={`animation-delay: ${Math.min(index, 10) * 50}ms`}>
+            <a href={`/${company.slug}`} class="block">
+              <div class="p-8 lg:p-10">
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex-1">
+                    <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2 hover:text-primary transition-colors">
+                      {company.title || company.headline_title}
+                    </h2>
+                    {company.excerpt && (
+                      <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                        {company.excerpt}
+                      </p>
+                    )}
+                  </div>
+                  {company.featured_image_url && (
+                    <div class="hidden lg:block ml-8 flex-shrink-0">
+                      <img
+                        src={company.featured_image_url}
+                        alt={company.title || company.headline_title}
+                        class="w-32 h-32 object-cover rounded-lg"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div class="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  {company.reading_time_minutes && (
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span>{company.reading_time_minutes} min read</span>
+                    </div>
+                  )}
+                  <span class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                    </svg>
+                    Placement Agent
+                  </span>
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16">
+        <svg class="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Companies Listed Yet</h2>
+        <p class="text-gray-600 dark:text-gray-400">Company profiles will be added soon.</p>
+      </div>
+    )}
+  </main>
+
+  <!-- Footer -->
+  <Footer siteName={fullSiteName} />
+</BaseLayout>
