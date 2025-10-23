@@ -17,15 +17,22 @@ initializeSql(databaseUrl);
 
 const { slug } = Astro.params;
 // Extract just first word of SITE_NAME for database query (e.g., "Placement Quest" -> "placement")
-const siteName = (import.meta.env.SITE_NAME?.split(' ')[0] || 'placement').toLowerCase();
-const article = await getArticleBySlug(siteName, slug || '');
+const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
+const siteName = (fullSiteName.split(' ')[0] || 'placement').toLowerCase();
 
-if (!article) {
+// Add error handling to catch database issues
+let article;
+try {
+  article = await getArticleBySlug(siteName, slug || '');
+} catch (error) {
+  console.error(`Error fetching article for slug "${slug}":`, error);
   return Astro.redirect('/404');
 }
 
-// Get site info from env
-const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
+if (!article) {
+  console.log(`Article not found for site="${siteName}", slug="${slug}"`);
+  return Astro.redirect('/404');
+}
 
 // Format publish date
 const publishDate = article.created_at
