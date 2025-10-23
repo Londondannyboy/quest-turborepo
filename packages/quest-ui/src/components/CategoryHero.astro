@@ -20,7 +20,7 @@ const { title, description, imageUrl } = Astro.props;
 ---
 
 <section class="relative w-full overflow-hidden">
-  {/* Background Image with Overlay */}
+  <!-- Background Image with Overlay -->
   <div class="relative h-64 md:h-80 lg:h-96">
     {imageUrl ? (
       <>
@@ -32,15 +32,15 @@ const { title, description, imageUrl } = Astro.props;
           decoding="async"
           fetchpriority="high"
         />
-        {/* Dark overlay for better text readability */}
+        <!-- Dark overlay for better text readability -->
         <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>
       </>
     ) : (
-      {/* Fallback gradient if no image */}
+      <!-- Fallback gradient if no image -->
       <div class="absolute inset-0 bg-gradient-to-br from-primary via-primary-dark to-accent"></div>
     )}
 
-    {/* Content */}
+    <!-- Content -->
     <div class="container mx-auto px-6 h-full flex flex-col justify-center relative z-10">
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-lg">
         {title}
@@ -53,6 +53,6 @@ const { title, description, imageUrl } = Astro.props;
     </div>
   </div>
 
-  {/* Bottom decorative border */}
+  <!-- Bottom decorative border -->
   <div class="h-1 bg-gradient-to-r from-primary via-accent to-primary-dark"></div>
 </section>
