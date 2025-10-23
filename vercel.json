@@ -1,5 +1,0 @@
-{
-  "buildCommand": "pnpm turbo run build --filter=placement",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "framework": null
-}
