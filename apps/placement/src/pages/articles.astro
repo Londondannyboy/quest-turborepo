@@ -4,6 +4,7 @@ export const prerender = false;
 import BaseLayout from '@quest/ui/layouts/base.astro';
 import Header from '@quest/ui/components/Header.astro';
 import Footer from '@quest/ui/components/Footer.astro';
+import CategoryHero from '@quest/ui/components/CategoryHero.astro';
 import ArticleCardGrid from '@quest/ui/components/ArticleCardGrid.astro';
 import { initializeSql, getRecentArticles } from '@quest/db';
 
@@ -27,21 +28,22 @@ const articles = await getRecentArticles(siteName, 50);
   <!-- Header -->
   <Header siteName={fullSiteName} />
 
-  <!-- Articles Page Hero -->
-  <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16 lg:py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold mb-4">Articles</h1>
-      <p class="text-xl lg:text-2xl text-gray-100 font-light max-w-3xl mx-auto">
-        Comprehensive insights and analysis for industry professionals
-      </p>
-      <div class="mt-8 text-lg text-gray-200">
-        {articles.length} {articles.length === 1 ? 'article' : 'articles'} available
-      </div>
-    </div>
-  </section>
+  <!-- Category Hero with Generated Banner -->
+  <CategoryHero
+    title="Latest Articles"
+    description="Expert insights and analysis on private equity placement and fundraising"
+    imageUrl="https://res.cloudinary.com/dc7btom12/image/upload/v1761192064/quest/placement/categories/articles-hero.png"
+  />
 
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    {/* Article Count */}
+    <div class="mb-8">
+      <p class="text-gray-600 dark:text-gray-400 text-lg">
+        <span class="font-semibold text-primary">{articles.length}</span> {articles.length === 1 ? 'article' : 'articles'} found
+      </p>
+    </div>
+
     {articles.length > 0 ? (
       <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {articles.map((article) => (

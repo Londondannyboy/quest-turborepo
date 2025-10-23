@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@quest/ui/layouts/base.astro';
+import Header from '@quest/ui/components/Header.astro';
+import Footer from '@quest/ui/components/Footer.astro';
+import CategoryHero from '@quest/ui/components/CategoryHero.astro';
+import CitiesCollection from '@quest/ui/components/CitiesCollection.astro';
+
+const siteName = import.meta.env.SITE_NAME || 'Placement Quest';
+const cities = [
+  {
+    name: 'London',
+    country: 'United Kingdom',
+    description: 'Global financial hub with top placement agents',
+    image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800',
+    articleCount: 12
+  },
+  {
+    name: 'New York',
+    country: 'United States',
+    description: 'Wall Street headquarters and PE capital',
+    image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800',
+    articleCount: 15
+  },
+  {
+    name: 'Hong Kong',
+    country: 'China',
+    description: 'Asia-Pacific financial gateway',
+    image: 'https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=800',
+    articleCount: 8
+  },
+  {
+    name: 'Singapore',
+    country: 'Singapore',
+    description: 'Southeast Asian finance center',
+    image: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800',
+    articleCount: 6
+  },
+  {
+    name: 'Frankfurt',
+    country: 'Germany',
+    description: 'European banking and PE hub',
+    image: 'https://images.unsplash.com/photo-1564221710304-0b37c8b9d729?w=800',
+    articleCount: 5
+  },
+  {
+    name: 'Dubai',
+    country: 'United Arab Emirates',
+    description: 'Middle East financial center',
+    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800',
+    articleCount: 4
+  }
+];
+---
+
+<BaseLayout
+  title={`Global Financial Centers | ${siteName}`}
+  description="Explore placement agents and private equity opportunities across major financial centers worldwide."
+>
+  <Header />
+
+  <CategoryHero
+    title="Global Financial Centers"
+    description="Discover placement agents and fundraising opportunities across the world's leading financial hubs"
+    imageUrl="https://res.cloudinary.com/dc7btom12/image/upload/v1761192073/quest/placement/categories/cities-hero.png"
+  />
+
+  <main class="container mx-auto px-6 py-12">
+    <CitiesCollection cities={cities} />
+  </main>
+
+  <Footer />
+</BaseLayout>
