@@ -15,7 +15,10 @@ if (!databaseUrl) {
 
 initializeSql(databaseUrl);
 
-const { slug } = Astro.params;
+// Handle rest parameter [...slug] - could be string or string[]
+const slugParam = Astro.params.slug;
+const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
+
 // Extract just first word of SITE_NAME for database query (e.g., "Placement Quest" -> "placement")
 const fullSiteName = import.meta.env.SITE_NAME || 'Placement Quest';
 const siteName = (fullSiteName.split(' ')[0] || 'placement').toLowerCase();

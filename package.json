@@ -4,19 +4,30 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "generate-images": "node scripts/generate-article-images.mjs"
+    "generate-images": "node scripts/generate-article-images.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
-    "replicate": "^1.3.0",
-    "cloudinary": "^2.8.0",
     "@neondatabase/serverless": "^0.10.4",
-    "dotenv": "^16.4.5"
+    "cloudinary": "^2.8.0",
+    "dotenv": "^16.4.5",
+    "replicate": "^1.3.0"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
     "turbo": "^2.3.3"
   },
   "packageManager": "pnpm@8.15.0",
   "engines": {
     "node": ">=18"
+  },
+  "lint-staged": {
+    "*.{js,mjs,ts,tsx,astro}": [
+      "echo 'Linting disabled - configure ESLint in future'"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "echo 'Formatting disabled - configure Prettier in future'"
+    ]
   }
 }

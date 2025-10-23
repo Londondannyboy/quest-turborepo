@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🧪 Running pre-push checks..."
+
+# Test database connectivity
+if [ -n "$DATABASE_URL" ]; then
+  echo "✅ DATABASE_URL is set"
+else
+  echo "⚠️  Warning: DATABASE_URL not set (deployment may fail)"
+fi
+
+# Quick build validation
+echo "🔨 Building TurboRepo..."
+pnpm build
+
+if [ $? -eq 0 ]; then
+  echo "✅ Build successful"
+else
+  echo "❌ Build failed - push aborted"
+  exit 1
+fi
+
+echo "✅ Pre-push checks passed"
